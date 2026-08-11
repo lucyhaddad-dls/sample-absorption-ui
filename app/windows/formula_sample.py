@@ -2,10 +2,10 @@ from PySide6.QtWidgets import (QWidget, QLabel, QTextEdit,
                                QHBoxLayout, QVBoxLayout, QComboBox)
 
 from sample_mass_calcs.xas_sample import XRaySample
-from components.input_box import InputBoxes
-from components.plotting import PlotWidget
+from ..components.input_box import InputBoxes
+from ..components.plotting import PlotWidget
 from numpy import ndarray
-from components.units import UnitConversionWidget
+from ..components.units import UnitConversionWidget
 
 class FormulaWindow(QWidget):
     def __init__(self, parent=None):
