@@ -20,6 +20,7 @@ class InputBox(QWidget):
         self._value = str(initial)
         self.unit = unit
         self.sample = parent.parent.sample
+        self.parent = parent
 
         self.set_layout()
         self.setLayout(self.main_layout)
@@ -55,13 +56,17 @@ class InputBox(QWidget):
         # could do some checks here to be fair..
         self.value = self.text_edit.text()
       
-        dtype = type(getattr(self.sample, self.name))
-        if isinstance(dtype, (str, float, int)):
+        val = getattr(self.sample, self.name)
+        
+        if isinstance(val, (str, float, int)):
+            dtype = type(val)
             setattr(self.sample, self.name, dtype(self.value))
         else:
             new = Measurement(float(self.value), _unit = self.unit)
             setattr(self.sample, self.name, new)
-           
+        # TODO: need to re - init sample !
+        # self.sample = self.sample.__init__(**self.sample.__dict__)
+
 
 class InputBoxes(QWidget):
     def __init__(self, parent=None,
