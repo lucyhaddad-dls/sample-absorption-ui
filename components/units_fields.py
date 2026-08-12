@@ -55,5 +55,5 @@ class UnitDropdownWidget(QWidget):
             self.dropdown.setCurrentText(val)
 
         def update_parent_unit(self, v:str):
-            self.widget.parent.main_window.sample.on_unit_change(self._options["attr"], v)
-            self.widget.parent.on_unit_change()
+            self.widget.parent.main_window.sample.on_value_change(self._options["attr"], v)
+            self.widget.parent.on_value_change()

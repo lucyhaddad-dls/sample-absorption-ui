@@ -14,7 +14,10 @@ class SingleInputField(QWidget):
         main_layout = QHBoxLayout()
    
         self.name = name
-        self._value = str(value)
+        if value is None:
+            self._value = ""
+        else:
+            self._value = str(value)
         if isinstance(unit, Unit):
             self._unit = unit._repr_html_()
         else: self._unit = unit

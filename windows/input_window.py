@@ -37,10 +37,7 @@ class InputWindow(QWidget):
 
         self.setLayout(main_layout)
 
-    def on_unit_change(self):
+    def on_value_change(self):
         for widget in self._input_widgets:
             widget.update_text_and_unit()
-        self.plot_widget.redraw_plot()
-
-    def on_value_change(self):
         self.plot_widget.redraw_plot()
