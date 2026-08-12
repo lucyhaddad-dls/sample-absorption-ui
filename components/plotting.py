@@ -1,12 +1,15 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QComboBox)
-from PySide6.QtCore import Qt
 import matplotlib
 matplotlib.use("Qt5Agg")
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
-import numpy as np
+from numpy import ndarray
 from sample_mass_calcs.measurements import Measurement
+import numpy as np
+import logging
+
+log = logging.getLogger(__name__)
 
 class MplCanvas(FigureCanvasQTAgg):
     """
@@ -21,83 +24,72 @@ class MplCanvas(FigureCanvasQTAgg):
         self.ax = fig.add_subplot()
         super().__init__(fig)
 
-class Plot2D(QWidget):
+class XyPlot(QWidget):
+    """
+    Basic plot object.
+    """
     def __init__(self, parent=None):
-        super(Plot2D, self).__init__(parent)
+        super().__init__()
 
         layout = QVBoxLayout()
         self.canvas = MplCanvas(self)
         layout.addWidget(self.canvas)
- 
         self.setLayout(layout)
 
     def plot_xy(self,
-                x:Measurement|np.ndarray|list,
-                y:Measurement|np.ndarray|list):
+                x:Measurement|ndarray|list,
+                y:Measurement|ndarray|list):
         """
-        Clear `canvas.ax` and plot `x` and `y` data.
+        Clear `canvas.ax` and plot xy data.
         """
-        
         if isinstance(x, Measurement):
             xlabel = x.unit._repr_latex_()
             xplot = x.value
         else:
-            xlabel = ""
-            xplot = x
+            xlabel = ""; xplot = x
         if isinstance(y, Measurement):
             ylabel = y.unit._repr_latex_()
             yplot = y.value
         else:
-            ylabel = ""
-            yplot = y
+            ylabel = ""; yplot = y
 
         self.canvas.ax.cla()
         self.canvas.ax.plot(xplot, yplot)
         self.canvas.ax.set_xlabel(f"{xlabel}")
         self.canvas.ax.set_ylabel(f"{ylabel}")
-        self.canvas.draw_idle()
 
+        self.canvas.draw_idle()
 
 class PlotWidget(QWidget):
     def __init__(self, parent=None):
-        super(PlotWidget, self).__init__(parent)
+        super().__init__()
 
-        self.current_plot = "mass_absorption"
-
-        tab_names = ["mass_absorption", 
-                     "linear_absorption"]
-
-        self.plot_options = QComboBox()
-        self.plot_options.addItems(tab_names)
-        
         layout = QVBoxLayout()
         self.parent = parent
 
-        self.plot = Plot2D(self)
+        self.plot = XyPlot(self)
         layout.addWidget(self.plot)
-        layout.addWidget(self.plot_options)
 
         self.setLayout(layout)
 
-        x = parent.sample.energy
-        y = getattr(parent.sample, self.current_plot)
-        self.plot.plot_xy(x, y)
-
-        self.plot_options.currentTextChanged.connect(self.on_plot_options_change)
-        
-    def on_plot_options_change(self, v):
-        self.current_plot = v
         self.redraw_plot()
 
-    def redraw_plot(self):
-        self.plot.canvas.ax.cla() 
-        x = self.parent.sample.energy
+    def get_xy(self,
+            x_key:str="energy",
+            y_key:str="mass_absorption"):
+        # change these later,,,!!!
         try:
-            y = getattr(self.parent.sample, self.current_plot)
-            self.plot.plot_xy(x, y)
+            self.x = getattr(self.parent.main_window.sample.sample, x_key)
         except:
-            y = np.empty_like(x.value)
-            print("no value for: ", self.current_plot)
-                   
-        self.plot.canvas.draw_idle()
+            self.x = np.empty((10))
+            log.warning(f"No value for {x_key}")
+        try:
+            self.y = getattr(self.parent.main_window.sample.sample, y_key)
+        except:
+            self.y = np.empty_like(self.x)
+            log.warning(f"No value for {y_key}")
+
+    def redraw_plot(self):
+        self.get_xy()
+        self.plot.plot_xy(self.x, self.y)
         
