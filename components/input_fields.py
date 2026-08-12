@@ -23,6 +23,7 @@ class SingleInputField(QWidget):
         else: self._unit = unit
 
         self.parent = parent
+        self.sample = self.parent.sample
 
         main_layout.addWidget(QLabel(text = self.name))
         self.text_edit = QLineEdit(text = self.value)
@@ -77,7 +78,7 @@ class SingleInputField(QWidget):
             remake_sample = True
         else:
             remake_sample = False
-        self.parent.main_window.sample.on_value_change(self.name, self.value, remake_sample)
+        self.sample.on_value_change(self.name, self.value, remake_sample)
         self.parent.on_value_change()
     
     def update_text_and_unit(self):
@@ -85,7 +86,7 @@ class SingleInputField(QWidget):
         Set `value` and `unit` to match the parent's \
         `sample` object and update text + unit fields.
         """
-        value, unit = self.parent.main_window.sample.get_name_and_unit(self.name) 
+        value, unit = self.sample.get_name_and_unit(self.name) 
         self.value = value
         self.unit = unit
         self.change_text_and_unit()

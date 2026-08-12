@@ -10,8 +10,9 @@ class InputWindow(QWidget):
         main_layout = QHBoxLayout()
 
         self.main_window = parent
+        self.sample = self.main_window.sample
 
-        input_keys = [l for l in self.main_window.sample.sample_dict.keys()\
+        input_keys = [l for l in self.sample.sample_dict.keys()\
                        if "unit" not in l]
 
         vertical_layout = QVBoxLayout()
@@ -21,7 +22,7 @@ class InputWindow(QWidget):
         inputs_layout = QVBoxLayout()
         self._input_widgets = []
         for name in input_keys:
-            val, unit = self.main_window.sample.get_name_and_unit(name)
+            val, unit = self.sample.get_name_and_unit(name)
             tmp = SingleInputField(parent = self,
                                    name = name, 
                                    value = val,
