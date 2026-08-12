@@ -41,4 +41,5 @@ class InputWindow(QWidget):
     def on_value_change(self):
         for widget in self._input_widgets:
             widget.update_text_and_unit()
-        self.plot_widget.redraw_plot()
+        self.plot_widget.change_checkbox_names()
+    
