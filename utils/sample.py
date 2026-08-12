@@ -1,5 +1,4 @@
 from sample_mass_calcs.xas_sample import XRaySample
-from typing import Literal
 
 class SampleBuilder:
     """
@@ -70,9 +69,14 @@ class SampleBuilder:
         measurement = getattr(self.sample, name)
 
         if hasattr(measurement, "unit"):
-            measurement.value = dtype(value)
+            try:
+                measurement.value = dtype(value)
+            except:
+                measurement.value = None
         else:
-            measurement = dtype(value)
+            try:
+                measurement = dtype(value)
+            except: measurement = None
 
         setattr(self.sample, name, measurement)
 
