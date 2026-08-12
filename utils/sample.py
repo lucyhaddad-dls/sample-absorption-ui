@@ -31,6 +31,10 @@ class SampleBuilder:
         self.make_sample()
 
     def sample_dict_to_kwargs(self)->dict:
+        """
+        Convert `sample_dict` to suitable kwargs for \
+        creating an `XRaySample` object.
+        """
         kwargs = {}
         for k, v in self.sample_dict.items():
             if v["val"] is None or v["val"] == "None":
@@ -46,8 +50,11 @@ class SampleBuilder:
         values = self.sample_dict_to_kwargs()
         self.sample = XRaySample(**values)
 
-
     def update_sample_dict(self):
+        """
+        Update `sample_dict` such that it is \
+        up-to-date with the current `sample` object.
+        """
         for k in self.sample_dict.keys():
             val = getattr(self.sample, k)
             if val is None:
@@ -63,6 +70,11 @@ class SampleBuilder:
                         name:str,
                         value:str,
                         remake_sample:bool=False):
+        """
+        Update `sample_dict` and `sample` with new values. \\
+        If `remake_sample = True` then a new `sample` object \
+        will be created.
+        """
 
         dtype = self.sample_dict[name]["dtype"]
 

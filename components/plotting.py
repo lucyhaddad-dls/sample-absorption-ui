@@ -77,7 +77,7 @@ class PlotWidget(QWidget):
     def get_xy(self,
             x_key:str="energy",
             y_key:str="mass_absorption"):
-        # change these later,,,!!!
+        
         try:
             self.x = getattr(self.parent.main_window.sample.sample, x_key)
         except:
@@ -92,4 +92,3 @@ class PlotWidget(QWidget):
     def redraw_plot(self):
         self.get_xy()
         self.plot.plot_xy(self.x, self.y)
-        
