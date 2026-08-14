@@ -7,6 +7,8 @@ class UnitDropdownWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
+        self.sample = self.parent.sample
+
         unit_options = {
             "length":
                 {"options":[units.nm, units.um, units.cm, units.m],
@@ -32,7 +34,9 @@ class UnitDropdownWidget(QWidget):
     class UnitDropdownBar(QWidget):
         def __init__(self, parent, options:dict):
             super().__init__()
+
             self.widget = parent
+            self.sample = self.widget.sample
 
             layout = QHBoxLayout()
             layout.addWidget(QLabel(options["title"]))
@@ -50,10 +54,10 @@ class UnitDropdownWidget(QWidget):
 
         def get_parent_unit(self):
             attr = self._options["attr"]
-            val = getattr(self.widget.parent.main_window.sample.sample, attr)
+            val = getattr(self.sample.sample, attr)
             val = val._repr_html_()
             self.dropdown.setCurrentText(val)
 
         def update_parent_unit(self, v:str):
-            self.widget.parent.main_window.sample.on_unit_change(self._options["attr"], v)
-            self.widget.parent.on_unit_change()
+            self.widget.sample.on_value_change(self._options["attr"], v)
+            self.widget.parent.on_value_change()

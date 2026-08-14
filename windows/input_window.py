@@ -10,8 +10,9 @@ class InputWindow(QWidget):
         main_layout = QHBoxLayout()
 
         self.main_window = parent
+        self.sample = self.main_window.sample
 
-        input_keys = [l for l in self.main_window.sample.sample_dict.keys()\
+        input_keys = [l for l in self.sample.sample_dict.keys()\
                        if "unit" not in l]
 
         vertical_layout = QVBoxLayout()
@@ -21,7 +22,7 @@ class InputWindow(QWidget):
         inputs_layout = QVBoxLayout()
         self._input_widgets = []
         for name in input_keys:
-            val, unit = self.main_window.sample.get_name_and_unit(name)
+            val, unit = self.sample.get_name_and_unit(name)
             tmp = SingleInputField(parent = self,
                                    name = name, 
                                    value = val,
@@ -37,10 +38,9 @@ class InputWindow(QWidget):
 
         self.setLayout(main_layout)
 
-    def on_unit_change(self):
+    def on_value_change(self):
         for widget in self._input_widgets:
             widget.update_text_and_unit()
-        self.plot_widget.redraw_plot()
-
-    def on_value_change(self):
-        self.plot_widget.redraw_plot()
+        self.plot_widget.change_checkbox_names()
+        self.plot_widget.on_unit_change()
+    
