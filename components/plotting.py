@@ -6,8 +6,8 @@ matplotlib.use("Qt5Agg")
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
 from numpy import ndarray
-from components.elements_checkbox import ElementsCheckbox
-from sample_mass_calcs.measurements import Measurement
+
+from .elements_checkbox import ElementsCheckbox
 import numpy as np
 import logging
 
@@ -46,7 +46,10 @@ class XyPlot(QWidget):
         
         self.canvas.ax.cla()
         if len(linenames) == 1:
-            self.canvas.ax.plot(x, y[0], label=linenames[0])
+            if y.ndim > 1:
+                self.canvas.ax.plot(x, y[0], label=linenames[0])
+            else:
+                self.canvas.ax.plot(x, y, label=linenames[0])
         else:
             for i in range(len(linenames)):
                 self.canvas.ax.plot(x, y[i,:], label=linenames[i])
@@ -84,7 +87,6 @@ class PlotWidget(QWidget):
         self.elements = self.parent.sample.sample.elements
         names = [e.name for e in self.elements]
         self.checkbox_widget.change_checkbox_names(names)
-
 
     def handle_element_checkstate(self):
         if hasattr(self, "checkbox_widget"):

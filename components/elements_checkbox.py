@@ -1,6 +1,4 @@
-# stack of checkboxes that can be added / deleted at choice:
-
-from PySide6.QtWidgets import (QWidget, QCheckBox, QVBoxLayout)
+from PySide6.QtWidgets import (QWidget, QCheckBox, QVBoxLayout, QLabel)
 from PySide6.QtCore import Qt
 
 class ElementsCheckbox(QWidget):
@@ -8,42 +6,53 @@ class ElementsCheckbox(QWidget):
         super().__init__()
 
         self.parent = parent
+        self._sum_text = "∑ Elements"
 
-        self._sum_txt = "∑ Elements"
-        labels.append(self._sum_txt)
-
-        self.layout = QVBoxLayout()
         self._checkboxes = []
-
+        self.layout = QVBoxLayout()
+        
         for element in labels:
-            tmp = QCheckBox(text = element)
-            self._checkboxes.append(tmp)
-            tmp.checkStateChanged.connect(parent.handle_element_checkstate)
-            self.layout.addWidget(tmp)
+            self.make_checkbox(text = element)
+        self.make_checkbox(text = self._sum_text)
 
-        self._checkboxes[-1].setCheckState(Qt.CheckState.Checked)
         self.setLayout(self.layout)
 
+    def make_checkbox(self, text:str):
+        """
+        Make single checkbox, connect to parent's `handle_element_checkstate()`
+        method and add to `layout` + `_checkboxes`.
+        """
+        checkbox = QCheckBox(text = text)
+        checkbox.checkStateChanged.connect(self.parent.handle_element_checkstate)
+        self._checkboxes.append(checkbox)
+        self.layout.addWidget(checkbox)
+        
+
     def get_checked_names(self)->list[str]:
+        """
+        Get list of names of checked checkboxes.
+        """
         checked = [c.text() for c in self._checkboxes if c.checkState() == Qt.CheckState.Checked]
         return checked
 
-    def change_checkbox_names(self, new_labels:list[str]):
-
-        labels = new_labels + [self._sum_txt]
-
-        [tmp.setCheckState(Qt.CheckState.Unchecked) for tmp in self._checkboxes if tmp.text() != self._sum_txt]
-
-        to_remove = [r for r in [c.text() for c in self._checkboxes] if r not in labels]
-        for i in range(len(self._checkboxes)):
-            if self._checkboxes[i].text() in to_remove:
-                self._checkboxes.pop(i)
-                p = self.layout.takeAt(i)
-                del p
-
+    def change_checkbox_names(self, labels):
+        """
+        Update the layout with old names being removed and
+        new ones added.
+        """
+        to_remove = [c for c in self._checkboxes if c.text() not in labels]
+        rm_text = [c.text() for c in to_remove]
         to_add = [l for l in labels if l not in [c.text() for c in self._checkboxes]]
-        for name in to_add:
-            tmp = QCheckBox(text = name)
-            self._checkboxes.append(tmp)
-            tmp.checkStateChanged.connect(self.parent.handle_element_checkstate)
-            self.layout.addWidget(tmp)
+        [self._checkboxes.remove(w) for w in to_remove]
+
+        for i in range(self.layout.count()):
+            item_tmp = self.layout.itemAt(i)
+            if item_tmp == None: continue
+            widget_tmp = item_tmp.widget()
+            if widget_tmp.text() in rm_text:
+                self.layout.itemAt(i).widget().deleteLater()
+
+        for a in to_add:
+            self.make_checkbox(text = a)
+        self.make_checkbox(text = self._sum_text)
+        self.layout.update()
