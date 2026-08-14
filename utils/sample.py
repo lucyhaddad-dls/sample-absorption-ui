@@ -27,6 +27,8 @@ class SampleBuilder:
                 "length_unit": {"val": "cm", "dtype":str},
                 "energy_unit": {"val": "gev", "dtype":str}
                 }
+
+        # to do on sample mass maths end: fix unit conversions - cm to um seems to be wrong.
         
         self.make_sample()
 
