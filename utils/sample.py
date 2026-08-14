@@ -96,6 +96,9 @@ class SampleBuilder:
 
         if remake_sample is True:
             self.make_sample()
+
+        self.calculate_thickness()
+        self.calculate_mass()
     
     def get_name_and_unit(self, name:str)\
         ->tuple[str|None, str|None]:
@@ -114,6 +117,16 @@ class SampleBuilder:
             unit = None; value = measurement
         return value, unit
 
+    def calculate_thickness(self):
+        """
+        If sample density is known, calculate sample thickness.
+        """
+        if self.sample.density.value is not None:
+            self.sample.calculate_thickness()
 
-
-    
+    def calculate_mass(self):
+        """
+        If sample area and sample density (+ thickness) are known, calculate sample mass.
+        """
+        if self.sample.area.value is not None and self.sample.density.value is not None:
+            self.sample.calculate_mass()

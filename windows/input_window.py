@@ -43,4 +43,3 @@ class InputWindow(QWidget):
             widget.update_text_and_unit()
         self.plot_widget.change_checkbox_names()
         self.plot_widget.on_unit_change()
-    
