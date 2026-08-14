@@ -76,13 +76,11 @@ class PlotWidget(QWidget):
 
         self.checkbox_widget = ElementsCheckbox(self, elements)
         layout.addWidget(self.checkbox_widget)
-        
     
         self.setLayout(layout)
 
     def change_checkbox_names(self):
         if self.elements == self.parent.sample.sample.elements:
-            print("no change")
             return
         self.elements = self.parent.sample.sample.elements
         names = [e.name for e in self.elements]
@@ -124,9 +122,11 @@ class PlotWidget(QWidget):
         return xplot, yplot, xlabel, ylabel
                 
     def plot_multiple_elements(self):
-        if len(self.checked) >= 1:
-            xplot, yplot, xlabel, ylabel = self.check_x_y_types()
-            self.plot.plot_xy(xplot, yplot, xlabel, ylabel, self.checked)
-        else:
-            self.plot.canvas.ax.cla()
-            self.plot.canvas.draw_idle()
+        xplot, yplot, xlabel, ylabel = self.check_x_y_types()
+        self.plot.plot_xy(xplot, yplot, xlabel, ylabel, self.checked)
+
+    def on_unit_change(self):
+        if hasattr(self, "checked"):
+            outs = self.check_x_y_types()
+            self.plot.plot_xy(*outs, self.checked)
+        
