@@ -27,6 +27,9 @@ class InputWindow(QWidget):
                                    name = name, 
                                    value = val,
                                    unit = unit)
+
+            # change sample input field to display different unit options?
+            # will require changing the unit dropdown widget too.
             inputs_layout.addWidget(tmp)
             self._input_widgets.append(tmp)
         vertical_layout.addLayout(inputs_layout)
